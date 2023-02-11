@@ -22,7 +22,6 @@
 unsigned short tim = 0;
 unsigned short tim_wash = 0;
 unsigned short adc_data = 0;
-unsigned char first_time = 1;
 
 void timer_init()
 {
@@ -41,23 +40,11 @@ ISR (TIMER1_COMPA_vect)
 			tim++;
 			if (tim >= 300)
 			{
-				if (first_time == 1) 
-				{
-					ControlRelayActive;
-					while (CHECK_POS0);
-					while (CHECK_POS1);
-					ControlRelayInactive;
-					first_time = 0;
-				}
-				else if (first_time == 0 && ((tim-300)%50000) == 0)
-				{
-					ControlRelayActive;
-					while (CHECK_POS0);
-					while (CHECK_POS1);
-					ControlRelayInactive;
-					tim = 0;
-				}
-				//_delay_ms(5000);
+				ControlRelayActive;
+				while (CHECK_POS0);
+				while (CHECK_POS1);
+				ControlRelayInactive;
+				_delay_ms(5000);
 				
 				if (CHECK_WASH1)
 				{
@@ -77,7 +64,6 @@ ISR (TIMER1_COMPA_vect)
 			}
 		}
 		tim = 0;
-		first_time = 1;
 	}
 	if (CHECK_WASH1)
 	{
@@ -86,7 +72,7 @@ ISR (TIMER1_COMPA_vect)
 			tim_wash++;
 			if (tim_wash >= 300)
 			{
-				for (uint8_t count = 0; count <= 2; count++)
+				for (uint8_t count = 0; count < 2; count++)
 				{
 					ControlRelayActive;
 					while (CHECK_POS0);
